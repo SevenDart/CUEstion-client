@@ -8,5 +8,5 @@ export interface Answer {
   user: User;
   createTime: Date;
   updateTime: Date;
-  comments: AppComment[];
+  comments?: AppComment[];
 }

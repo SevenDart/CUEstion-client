@@ -24,7 +24,9 @@ export class QuestionPageComponent implements OnInit {
 
   constructor(private questionService: QuestionsService,
               private activatedRoute: ActivatedRoute,
-              private router: Router, private snackBar: MatSnackBar, private dialog: MatDialog) {
+              private router: Router,
+              private snackBar: MatSnackBar,
+              private dialog: MatDialog) {
   }
 
   get isAuthed() {
@@ -38,13 +40,10 @@ export class QuestionPageComponent implements OnInit {
   get isOwner() {
     return UsersService.userId === this.question.user.id;
   }
+
   questionVotingExpanded = false;
-  isSubscribed: boolean;
   question: Question;
 
-  questionComments: Observable<AppComment[]>;
-  answersObs: Observable<Answer[]>;
-  answerComments: Observable<AppComment[]>[] = [];
   answersForms = [];
   commentForms = [];
 
@@ -53,138 +52,65 @@ export class QuestionPageComponent implements OnInit {
   commentControl: FormControl = new FormControl('',
     [Validators.required, Validators.minLength(10), Validators.maxLength(200)]);
 
-  updateAnswers() {
-    this.answersObs = this.questionService.GetAnswersForQuestion(this.question.id);
-    this.answersObs.subscribe((answers: Answer[]) => {
-      for (const answer of answers) {
-        this.answersForms[answer.id] = {
-          get isOwner() {
-            return UsersService.userId === answer.user.id;
-          },
-          rate: answer.rate,
-          isEditing: false,
-          votingExpanded: false,
-          editFormControl: new FormControl('',
-            [Validators.required, Validators.maxLength(500 - answer.text.length - 8)]),
-          addCommentFormControl: new FormControl('',
-            [Validators.required, Validators.minLength(10), Validators.maxLength(200)])
-        };
-        this.updateAnswerComments(answer.id);
-      }
+  ngOnInit() {
+    this.activatedRoute.paramMap.subscribe((map: ParamMap) => {
+      const id: number = Number(map.get('id'));
+      this.questionService.GetQuestion(id).subscribe((question: Question) => {
+        this.question = question;
+        this.loadAnswers();
+      });
+      this.loadQuestionComments(id);
     });
   }
 
-  updateQuestionComments(questionId: number) {
-    this.questionComments = this.questionService.GetCommentsForQuestion(questionId);
-    this.questionComments.subscribe((comments: AppComment[]) => {
-      for (const comment of comments) {
-        this.commentForms[comment.id] = {
-          get isOwner() {
-            return UsersService.userId === comment.user.id;
-          },
-          rate: comment.rate,
-          isEditing: false,
-          votingExpanded: false,
-          editFormControl: new FormControl('',
-            [Validators.required, Validators.maxLength(200 - comment.text.length - 8)]),
-        };
-      }
-    });
-  }
-
-  updateAnswerComments(answerId: number) {
-    this.answerComments[answerId] = this.questionService.GetCommentsForAnswer(0, answerId);
-    this.answerComments[answerId].subscribe((comments: AppComment[]) => {
-      for (const comment of comments) {
-        this.commentForms[comment.id] = {
-          get isOwner() {
-            return UsersService.userId === comment.user.id;
-          },
-          rate: comment.rate,
-          isEditing: false,
-          votingExpanded: false,
-          editFormControl: new FormControl('',
-            [Validators.required, Validators.maxLength(200 - comment.text.length)]),
-        };
-      }
-    });
-  }
-
-  updateComment(questionId: number, answerId: number, commentId: number, originText: string) {
-    this.questionService.UpdateComment(this.question.id, answerId, commentId,
-      (originText + (this.commentForms[commentId].editFormControl.value.length > 0
-        ? ' [UPD.] ' + this.commentForms[commentId].editFormControl.value
-        : '')))
-      .pipe(
-        catchError((error: HttpErrorResponse) => {
-          if (error.status === 500) {
-            const bar = this.snackBar.open('Something is wrong, please, try again later.', 'Close', {
-              panelClass: ['mat-toolbar', 'mat-warn'],
-            });
-            bar._dismissAfter(3 * 1000);
-            return of([]);
-          }
-          if (error.status === 0) {
-            this.snackBar.open('Something is wrong, try, please, later.', '', {
-              panelClass: ['mat-toolbar', 'mat-warn']
-            });
-            return throwError(() => {
-              return new Error('something is wrong');
-            });
-          }
-        })
-      ).subscribe( (data) => {
-        if (data === null) {
-          if (questionId != null) {
-            this.updateQuestionComments(questionId);
-          } else {
-            this.updateAnswerComments(answerId);
-          }
+  loadAnswers() {
+    this.questionService.GetAnswersForQuestion(this.question.id)
+      .subscribe((answers: Answer[]) => {
+        for (const answer of answers) {
+          this.answersForms[answer.id] = {
+            get isOwner() {
+              return UsersService.userId === answer.user.id;
+            },
+            rate: answer.rate,
+            isEditing: false,
+            votingExpanded: false,
+            editFormControl: new FormControl('',
+              [Validators.required, Validators.maxLength(500 - answer.text.length - 8)]),
+            addCommentFormControl: new FormControl('',
+              [Validators.required, Validators.minLength(10), Validators.maxLength(200)])
+          };
+          this.loadAnswerComments(answer);
         }
-      }
-    );
+        this.question.answers = answers;
+      });
   }
 
-  deleteComment(questionId: number, answerId: number, commentId: number) {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: {
-        header: 'Do you want to delete this comment?'
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result === true) {
-        this.questionService.DeleteComment(this.question.id, answerId, commentId).pipe(
-          catchError((error: HttpErrorResponse) => {
-            if (error.status === 500) {
-              const bar = this.snackBar.open('Something is wrong, please, try again later.', 'Close', {
-                panelClass: ['mat-toolbar', 'mat-warn'],
-              });
-              bar._dismissAfter(3 * 1000);
-              return of([]);
-            }
-            if (error.status === 0) {
-              this.snackBar.open('Something is wrong, try, please, later.', '', {
-                panelClass: ['mat-toolbar', 'mat-warn']
-              });
-              return throwError(() => {
-                return new Error('something is wrong');
-              });
-            }
-          })
-        ).subscribe( (data) => {
-          if (data === null) {
-            if (questionId != null) {
-              this.updateQuestionComments(questionId);
-            } else {
-              this.updateAnswerComments(answerId);
-            }
-          }
-        });
+  addAnswer() {
+    this.questionService.AddAnswer(this.question.id, this.answerControl.value).pipe(
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 500) {
+          const bar = this.snackBar.open('Something is wrong, please, try again later.', 'Close', {
+            panelClass: ['mat-toolbar', 'mat-warn'],
+          });
+          bar._dismissAfter(3 * 1000);
+          return of([]);
+        }
+        if (error.status === 0) {
+          this.snackBar.open('Something is wrong, try, please, later.', '', {
+            panelClass: ['mat-toolbar', 'mat-warn']
+          });
+          return throwError(() => {
+            return new Error('something is wrong');
+          });
+        }
+      })
+    ).subscribe((data) => {
+      if (data === null) {
+        this.loadAnswers();
+        this.answerControl.reset();
       }
     });
   }
-
 
   updateAnswer(answerId: number, originText: string) {
     this.questionService.UpdateAnswer(this.question.id, answerId,
@@ -209,9 +135,9 @@ export class QuestionPageComponent implements OnInit {
             });
           }
         })
-      ).subscribe( (data) => {
+      ).subscribe((data) => {
         if (data === null) {
-          this.updateAnswers();
+          this.loadAnswers();
           this.answersForms[answerId].editFormControl.reset();
         }
       }
@@ -245,11 +171,48 @@ export class QuestionPageComponent implements OnInit {
               });
             }
           })
-        ).subscribe( (data) => {
+        ).subscribe((data) => {
           if (data === null) {
-            this.updateAnswers();
+            this.loadAnswers();
           }
         });
+      }
+    });
+  }
+
+  loadQuestionComments(questionId: number) {
+    this.questionService.GetCommentsForQuestion(questionId)
+      .subscribe((comments: AppComment[]) => {
+        for (const comment of comments) {
+          this.commentForms[comment.id] = {
+            get isOwner() {
+              return UsersService.userId === comment.user.id;
+            },
+            rate: comment.rate,
+            isEditing: false,
+            votingExpanded: false,
+            editFormControl: new FormControl('',
+              [Validators.required, Validators.maxLength(200 - comment.text.length - 8)]),
+          };
+        }
+        this.question.comments = comments;
+      });
+  }
+
+  loadAnswerComments(answer: Answer) {
+    this.questionService.GetCommentsForAnswer(this.question.id, answer.id).subscribe((comments: AppComment[]) => {
+      for (const comment of comments) {
+        this.commentForms[comment.id] = {
+          get isOwner() {
+            return UsersService.userId === comment.user.id;
+          },
+          rate: comment.rate,
+          isEditing: false,
+          votingExpanded: false,
+          editFormControl: new FormControl('',
+            [Validators.required, Validators.maxLength(200 - comment.text.length)]),
+        };
+        answer.comments = comments;
       }
     });
   }
@@ -276,33 +239,22 @@ export class QuestionPageComponent implements OnInit {
     ).subscribe((data) => {
       if (data === null) {
         if (questionId != null) {
-          this.updateQuestionComments(questionId);
+          this.loadQuestionComments(questionId);
         } else {
-          this.updateAnswerComments(answerId);
+          // this.loadAnswerComments(answerId);
         }
         commentControl.reset();
       }
     });
   }
 
-  ngOnInit() {
-    this.activatedRoute.paramMap.subscribe((map: ParamMap) => {
-      const id: number = Number(map.get('id'));
-      const questionObs = this.questionService.GetQuestion(id);
-      questionObs.subscribe((question: Question) => {
-        this.question = question;
-        this.questionService.IsSubscribedToQuestion(id).subscribe((isSubscribed: boolean) => {
-          this.isSubscribed = isSubscribed;
-        });
-        this.updateAnswers();
-      });
-      this.updateQuestionComments(id);
-    });
-  }
-
-  addAnswer() {
-    this.questionService.AddAnswer(this.question.id, this.answerControl.value).pipe(
-      catchError((error: HttpErrorResponse) => {
+  updateComment(questionId: number, answerId: number, commentId: number, originText: string) {
+    this.questionService.UpdateComment(this.question.id, answerId, commentId,
+      (originText + (this.commentForms[commentId].editFormControl.value.length > 0
+        ? ' [UPD.] ' + this.commentForms[commentId].editFormControl.value
+        : '')))
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
           if (error.status === 500) {
             const bar = this.snackBar.open('Something is wrong, please, try again later.', 'Close', {
               panelClass: ['mat-toolbar', 'mat-warn'],
@@ -320,9 +272,53 @@ export class QuestionPageComponent implements OnInit {
           }
         })
       ).subscribe((data) => {
-      if (data === null) {
-        this.updateAnswers();
-        this.answerControl.reset();
+        if (data === null) {
+          if (questionId != null) {
+            this.loadQuestionComments(questionId);
+          } else {
+            // this.loadAnswerComments(answerId);
+          }
+        }
+      }
+    );
+  }
+
+  deleteComment(questionId: number, answerId: number, commentId: number) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        header: 'Do you want to delete this comment?'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        this.questionService.DeleteComment(this.question.id, answerId, commentId).pipe(
+          catchError((error: HttpErrorResponse) => {
+            if (error.status === 500) {
+              const bar = this.snackBar.open('Something is wrong, please, try again later.', 'Close', {
+                panelClass: ['mat-toolbar', 'mat-warn'],
+              });
+              bar._dismissAfter(3 * 1000);
+              return of([]);
+            }
+            if (error.status === 0) {
+              this.snackBar.open('Something is wrong, try, please, later.', '', {
+                panelClass: ['mat-toolbar', 'mat-warn']
+              });
+              return throwError(() => {
+                return new Error('something is wrong');
+              });
+            }
+          })
+        ).subscribe((data) => {
+          if (data === null) {
+            if (questionId != null) {
+              this.loadQuestionComments(questionId);
+            } else {
+              // this.loadAnswerComments(answerId);
+            }
+          }
+        });
       }
     });
   }
@@ -415,69 +411,5 @@ export class QuestionPageComponent implements OnInit {
         }
       }
     });
-  }
-
-  subscribeToQuestion() {
-    this.questionService.SubscribeToQuestion(this.question.id)
-      .pipe(
-        catchError((error: HttpErrorResponse) => {
-          if (error.status === 500) {
-            const bar = this.snackBar.open('You have already subscribed to this question.', 'Close', {
-              panelClass: ['mat-toolbar', 'mat-warn'],
-            });
-            bar._dismissAfter(3 * 1000);
-            return of([]);
-          }
-          if (error.status === 0) {
-            this.snackBar.open('Something is wrong, try, please, later.', '', {
-              panelClass: ['mat-toolbar', 'mat-warn']
-            });
-            return throwError(() => {
-              return new Error('something is wrong');
-            });
-          }
-        })
-      ).subscribe( (data) => {
-        if (data === null) {
-          this.isSubscribed = true;
-          const bar = this.snackBar.open('You have subscribed to this question.', 'Close', {
-            panelClass: ['mat-toolbar', 'mat-primary'],
-          });
-          bar._dismissAfter(3 * 1000);
-        }
-      }
-    );
-  }
-
-  unsubscribeFromQuestion() {
-    this.questionService.UnsubscribeToQuestion(this.question.id)
-      .pipe(
-        catchError((error: HttpErrorResponse) => {
-          if (error.status === 500) {
-            const bar = this.snackBar.open('You have already unsubscribed from this question.', 'Close', {
-              panelClass: ['mat-toolbar', 'mat-warn'],
-            });
-            bar._dismissAfter(3 * 1000);
-            return of([]);
-          }
-          if (error.status === 0) {
-            this.snackBar.open('Something is wrong, try, please, later.', '', {
-              panelClass: ['mat-toolbar', 'mat-warn']
-            });
-            return throwError(() => {
-              return new Error('something is wrong');
-            });
-          }
-        })
-      ).subscribe( (data) => {
-        if (data === null) {
-          const bar = this.snackBar.open('You have unsubscribed from this question.', 'Close', {
-            panelClass: ['mat-toolbar', 'mat-primary'],
-          });
-          this.isSubscribed = false;
-          bar._dismissAfter(3 * 1000);
-        }
-      }
-    );
   }
 }

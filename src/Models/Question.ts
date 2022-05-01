@@ -11,6 +11,6 @@ export interface Question {
   updateTime: Date;
   tags: string[];
   user: User;
-  answers: Answer[];
-  comments: AppComment[];
+  answers?: Answer[];
+  comments?: AppComment[];
 }

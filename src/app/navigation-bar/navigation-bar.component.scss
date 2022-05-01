@@ -4,9 +4,9 @@
 .navbar {
   z-index: 100;
   position: sticky;
+  display: flex;
   top: 0;
-  padding-left: 50px;
-  padding-right: 50px;
+  padding: 5px 40px;
 }
 
 .search-field {
