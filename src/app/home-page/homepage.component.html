@@ -9,7 +9,7 @@
   <h1 class="popular-questions__header">Popular questions</h1>
   <table mat-table [dataSource]="popularQuestions" class="popular-questions-table">
     <ng-container matColumnDef="rate">
-      <td mat-cell *matCellDef="let question"><span class="badge rate"
+      <td mat-cell *matCellDef="let question"><span class="rate"
                                                  [class.positive]="question.rate > 0"
                                                  [class.negative]="question.rate < 0">{{question.rate}}</span></td>
     </ng-container>

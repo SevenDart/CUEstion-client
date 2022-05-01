@@ -40,9 +40,11 @@
   display: inline-flex;
   background-color: gray;
   font-size: 14px;
-  margin-right: 5px;
+  font-weight: bold;
+  color: white;
+  padding: 3px 5px;
+  border-radius: 4px;
   cursor: pointer;
-  transition: width 0.5s;
 }
 
 .date {
@@ -182,7 +184,8 @@
 }
 
 .vote-buttons {
-  width: 0%;
+  display: inline-flex;
+  width: 0;
   overflow: hidden;
   transition: width 0.5s, margin-left 0.5s;
 }

@@ -43,7 +43,7 @@
             </mat-panel-title>
           </mat-expansion-panel-header>
           <div class="comment" *ngFor="let comment of comments">
-            <div class="badge rate"
+            <div class="rate"
                  (click)="commentForms[comment.id].votingExpanded = !commentForms[comment.id].votingExpanded"
                  [class.positive]="commentForms[comment.id].rate > 0"
                  [class.negative]="commentForms[comment.id].rate < 0">
@@ -109,7 +109,7 @@
       <h1 class="answers__header">{{question.answers.length}} Answers</h1>
       <div class="answer" *ngFor="let answer of question.answers">
         <p class="text">{{answer.text}}</p>
-        <div class="badge rate"
+        <div class="rate"
              (click)="answersForms[answer.id].votingExpanded = !answersForms[answer.id].votingExpanded"
              [class.positive]="answersForms[answer.id].rate > 0"
              [class.negative]="answersForms[answer.id].rate < 0">
@@ -153,7 +153,7 @@
               </mat-panel-title>
             </mat-expansion-panel-header>
             <div class="comment" *ngFor="let comment of comments">
-              <div class="badge rate"
+              <div class="rate"
                    (click)="commentForms[comment.id].votingExpanded = !commentForms[comment.id].votingExpanded"
                    [class.positive]="commentForms[comment.id].rate > 0"
                    [class.negative]="commentForms[comment.id].rate < 0">
