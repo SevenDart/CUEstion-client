@@ -18,7 +18,8 @@ export class LogInComponent {
     password: new FormControl('', [Validators.required, Validators.minLength(8)])
   });
 
-  constructor(private userService: UsersService, private snackBar: MatSnackBar) {
+  constructor(private userService: UsersService,
+              private snackBar: MatSnackBar) {
   }
 
   @Output() closeRequest = new EventEmitter<number>();

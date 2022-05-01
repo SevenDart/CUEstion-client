@@ -9,7 +9,7 @@
     </mat-form-field>
   </div>
   <div class="tag-list">
-    <div *ngFor="let tag of filteredTags | async" class="tag">
+    <div *ngFor="let tag of filteredTags" class="tag">
       <span class="text" *ngIf="!tagsForms[tag].isEditing; else editingForm">{{tag}}</span>
       <ng-template #editingForm>
         <mat-form-field appearance="outline" class="edit-form">

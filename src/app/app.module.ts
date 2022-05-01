@@ -32,7 +32,6 @@ import {QuestionPageComponent} from './question-page/question-page.component';
 import {SignDialogComponent} from './auth-panel/sign-dialog/sign-dialog.component';
 import {AuthPanelComponent} from './auth-panel/auth-panel.component';
 import {LogInComponent} from './auth-panel/sign-dialog/log-in/log-in.component';
-import {SnackBarContentComponent} from './auth-panel/sign-dialog/snack-bar-content/snack-bar-content.component';
 import {RegisterFormComponent} from './auth-panel/sign-dialog/register-form/register-form.component';
 import {CreateQuestionComponent} from './create-question/create-question.component';
 import {UpdateQuestionComponent} from './update-question/update-question.component';
@@ -65,7 +64,6 @@ const routes: Routes = [
     AuthPanelComponent,
     SignDialogComponent,
     LogInComponent,
-    SnackBarContentComponent,
     RegisterFormComponent,
     CreateQuestionComponent,
     UpdateQuestionComponent,

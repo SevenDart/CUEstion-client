@@ -39,7 +39,7 @@ export class QuestionsService {
   }
 
   GetAllTags() {
-    return this.http.get<string[]>(environment.serverAddress + '/questions/tags');
+    return this.http.get<string[]>(environment.serverAddress + '/tags');
   }
 
   CreateQuestion(header: string, description: string, tags: string[]) {
@@ -245,7 +245,7 @@ export class QuestionsService {
     };
 
     tag = encodeURIComponent(tag);
-    return this.http.post(encodeURI(environment.serverAddress + `/questions/tags?tag=${tag}`), null, options);
+    return this.http.post(encodeURI(environment.serverAddress + `/tags?tag=${tag}`), null, options);
   }
 
   UpdateTag(oldTag: string, newTag: string) {
@@ -257,7 +257,7 @@ export class QuestionsService {
 
     oldTag = encodeURIComponent(oldTag);
     newTag = encodeURIComponent(newTag);
-    return this.http.put(environment.serverAddress + `/questions/tags?oldTag=${oldTag}&newTag=${newTag}`, null, options);
+    return this.http.put(environment.serverAddress + `/tags?oldTag=${oldTag}&newTag=${newTag}`, null, options);
   }
 
   DeleteTag(tag: string) {
@@ -268,7 +268,7 @@ export class QuestionsService {
     };
 
     tag = encodeURIComponent(tag);
-    return this.http.delete(environment.serverAddress + `/questions/tags?tag=${tag}`, options);
+    return this.http.delete(environment.serverAddress + `/tags?tag=${tag}`, options);
   }
 
   SubscribeToQuestion(questionId: number) {

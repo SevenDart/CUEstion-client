@@ -1,7 +1,6 @@
-import {Component} from '@angular/core';
-import {UsersService} from '../../services/users.service';
+import {Component, OnInit} from '@angular/core';
 import {QuestionsService} from '../../services/questions.service';
-import {Observable, of, throwError} from 'rxjs';
+import { of, throwError } from 'rxjs';
 import {FormControl, Validators} from '@angular/forms';
 import {catchError, map, startWith} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
@@ -15,16 +14,21 @@ import {ConfirmDialogComponent} from '../confirm-dialog/confirm-dialog.component
   styleUrls: ['tag-editor.component.css'],
   providers: [QuestionsService]
 })
-export class TagEditorComponent {
+export class TagEditorComponent implements OnInit {
   tagSearch = new FormControl('');
   newTagControl = new FormControl('', [Validators.maxLength(10)]);
 
   allTags: string[] = [];
   tagsForms = [];
-  filteredTags: Observable<string[]>;
+  filteredTags: string[];
 
-  constructor(private questionsService: QuestionsService, private snackBar: MatSnackBar, private dialog: MatDialog) {
-    questionsService.GetAllTags().subscribe((tags: string[]) => {
+  constructor(private questionsService: QuestionsService,
+              private snackBar: MatSnackBar,
+              private dialog: MatDialog) {
+  }
+
+  ngOnInit(): void {
+    this.questionsService.GetAllTags().subscribe((tags: string[]) => {
       this.allTags = tags;
       for (const tag of tags) {
         this.tagsForms[tag] = {
@@ -32,15 +36,24 @@ export class TagEditorComponent {
           editControl: new FormControl(tag, [Validators.maxLength(10)])
         };
       }
-      this.filteredTags = this.tagSearch.valueChanges.pipe(
-        startWith(null),
-        map((tag: string | null) => tag ? this._filter(tag) : this.allTags.slice()));
+      this.filterTags();
     });
-  }
+    }
 
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
     return this.allTags.filter(tag => tag.toLowerCase().startsWith(filterValue));
+  }
+
+  private filterTags() {
+    this.tagSearch.valueChanges.pipe(
+      startWith(null),
+      map((tag: string | null) => tag ? this._filter(tag) : this.allTags.slice())
+    ).subscribe(
+      (filteredTags: string[]) => {
+        this.filteredTags = filteredTags;
+      }
+    );
   }
 
   deleteTag(tag: string) {
@@ -72,9 +85,7 @@ export class TagEditorComponent {
         ).subscribe((data) => {
           if (data === null) {
             this.allTags.splice(this.allTags.indexOf(tag), 1);
-            this.filteredTags = this.tagSearch.valueChanges.pipe(
-              startWith(null),
-              map((valueTag: string | null) => valueTag ? this._filter(valueTag) : this.allTags.slice()));
+            this.filterTags();
           }
         });
       }
@@ -108,9 +119,7 @@ export class TagEditorComponent {
           editControl: new FormControl(tag, [Validators.maxLength(10)])
         };
         this.newTagControl.setValue('');
-        this.filteredTags = this.tagSearch.valueChanges.pipe(
-          startWith(null),
-          map((valueTag: string | null) => valueTag ? this._filter(valueTag) : this.allTags.slice()));
+        this.filterTags();
       }
     });
   }
@@ -140,9 +149,7 @@ export class TagEditorComponent {
         this.tagsForms[newTag] = this.tagsForms[oldTag];
         this.tagsForms.splice(this.tagsForms.indexOf(oldTag), 1);
         this.tagsForms[newTag].isEditing = false;
-        this.filteredTags = this.tagSearch.valueChanges.pipe(
-          startWith(null),
-          map((valueTag: string | null) => valueTag ? this._filter(valueTag) : this.allTags.slice()));
+        this.filterTags();
       }
     });
   }

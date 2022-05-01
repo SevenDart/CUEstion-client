@@ -15,8 +15,10 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 export class AuthPanelComponent {
   user: User;
 
-  constructor(public dialog: MatDialog, private userService: UsersService, private snackBar: MatSnackBar) {
-    this.checkId();
+  constructor(public dialog: MatDialog,
+              private userService: UsersService,
+              private snackBar: MatSnackBar) {
+    this.loadUser();
   }
 
   get isAuthed() {
@@ -33,7 +35,7 @@ export class AuthPanelComponent {
         this.dialog.open(SignDialogComponent, {
           width: '500px'
         }).afterClosed().subscribe(() => {
-          this.checkId();
+          this.loadUser();
         });
       }
       return !isExpired;
@@ -48,17 +50,15 @@ export class AuthPanelComponent {
 
   refreshUser() {
     const id = localStorage.getItem('userId');
-    const userObs = this.userService.getUser(Number(id));
-    userObs.subscribe((user: User) => {
+    this.userService.getUser(Number(id)).subscribe((user: User) => {
       this.user.rate = user.rate;
     });
   }
 
-  checkId() {
+  loadUser() {
     const id = localStorage.getItem('userId');
     if (id) {
-      const userObs = this.userService.getUser(Number(id));
-      userObs.subscribe((user: User) => {
+      this.userService.getUser(Number(id)).subscribe((user: User) => {
         this.user = user;
       });
     }
@@ -69,7 +69,7 @@ export class AuthPanelComponent {
       width: '500px'
     });
     window.afterClosed().subscribe(() => {
-      this.checkId();
+      this.loadUser();
     });
   }
 

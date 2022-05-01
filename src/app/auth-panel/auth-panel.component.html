@@ -1,8 +1,7 @@
-<ng-container *ngIf="isAuthed && user; else authWindow">
+<ng-container *ngIf="isAuthed && user; else authPanel">
   <button mat-button [matMenuTriggerFor]="menu" class="username" (menuOpened)="refreshUser()">
-    <i class="fas fa-star user-icon admin" *ngIf="isAdmin"></i>
     <i class="fas fa-user-tie user-icon"></i>
-    {{user.username}}
+    <span>{{user.username}}</span>
   </button>
   <mat-menu #menu xPosition="before">
     <span mat-menu-item disabled class="text">
@@ -17,6 +16,7 @@
     <button mat-menu-item class="logout" (click)="logout()">Log out</button>
   </mat-menu>
 </ng-container>
-<ng-template #authWindow>
+
+<ng-template #authPanel>
   <i class="fas fa-sign-in-alt auth__button" (click)="openLoginWindow()"></i>
 </ng-template>
