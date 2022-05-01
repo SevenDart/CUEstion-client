@@ -34,10 +34,6 @@ export class UserPageComponent {
         this.createdQuestionsDataSource = new MatTableDataSource<Question>(questions);
         this.createdQuestionsDataSource.paginator = this.createdPaginator;
       });
-      usersService.getSubscribedQuestions().subscribe((questions: Question[]) => {
-        this.subscribedQuestionsDataSource = new MatTableDataSource<Question>(questions);
-        this.subscribedQuestionsDataSource.paginator = this.subscribedPaginator;
-      });
     });
   }
 }

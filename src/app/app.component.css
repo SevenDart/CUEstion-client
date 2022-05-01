@@ -1,6 +1,10 @@
 .main-content {
-  padding-top: 54px;
-  min-height: 100%;
-  padding-bottom: 30px;
+  min-height: 80vh;
   background: url("../resources/background-2.png") repeat;
 }
+
+.footer {
+  min-height: 20vh;
+  background-color: #EBEBEB;
+}
+

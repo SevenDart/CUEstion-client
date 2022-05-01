@@ -1,42 +1,34 @@
 .footer {
-  background-color: #EBEBEB;
   display: flex;
-  justify-content: center;
-  width: 100%;
+  justify-content: space-around;
 }
 
-.container-column {
-  padding: 1% 10%;
+.footer__column {
   display: flex;
   flex-direction: column;
-  width: 50%;
+  width: 25%;
   align-items: center;
 }
 
 .column__header {
   position: relative;
   font-size: 18px;
+  margin: 0;
 }
 
-.column__header::after {
-  content: "";
-  display: block;
-  height: 1px;
-  width: 200%;
-  position: absolute;
+.column__line {
   background-color: black;
-  left: -50%;
-  top: 35px;
+  height: 1px;
+  width: 25%;
+  margin: 10px 0;
 }
 
 .column__text {
-  font-size: 16px;
-  margin-bottom: 1%;
   text-align: center;
+  margin: 0;
 }
 
 .column__link {
-  font-size: 14px;
   text-decoration: none;
   color: black;
 }

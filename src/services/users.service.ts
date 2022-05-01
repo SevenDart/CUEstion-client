@@ -25,6 +25,7 @@ export class UsersService {
       email: email,
       password: password
     };
+
     return this.http.put(environment.serverAddress + '/users/login', authData);
   }
 
@@ -37,20 +38,11 @@ export class UsersService {
       email: email,
       password: password
     };
+
     return this.http.post(environment.serverAddress + '/users/register', authData);
   }
 
   getCreatedQuestions(userId: number) {
     return this.http.get<Question[]>(environment.serverAddress + `/users/${userId}/questions`);
-  }
-
-  getSubscribedQuestions() {
-    const options = {
-      headers: new HttpHeaders({
-        Authorization: 'Bearer ' + localStorage.getItem('token')
-      })
-    };
-
-    return this.http.get<Question[]>(environment.serverAddress + `/users/subscribed`, options);
   }
 }

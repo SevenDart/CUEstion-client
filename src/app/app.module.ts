@@ -26,7 +26,7 @@ import {AuthorizationGuard} from '../guards/authorization.guard';
 import {NavigationBarComponent} from './navigation-bar/navigation-bar.component';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {SearchFieldComponent} from './search-field/search-field.component';
-import {FooterBarComponent} from './footer-bar/footer-bar.component';
+import {AppFooterComponent} from './footer-bar/app-footer.component';
 import {HomePageComponent} from './home-page/homepage.component';
 import {QuestionPageComponent} from './question-page/question-page.component';
 import {SignDialogComponent} from './auth-panel/sign-dialog/sign-dialog.component';
@@ -59,7 +59,7 @@ const routes: Routes = [
     AppComponent,
     NavigationBarComponent,
     SearchFieldComponent,
-    FooterBarComponent,
+    AppFooterComponent,
     HomePageComponent,
     QuestionPageComponent,
     AuthPanelComponent,
