@@ -212,8 +212,8 @@ export class QuestionPageComponent implements OnInit {
           editFormControl: new FormControl('',
             [Validators.required, Validators.maxLength(200 - comment.text.length)]),
         };
-        answer.comments = comments;
       }
+      answer.comments = comments;
     });
   }
 
@@ -238,11 +238,12 @@ export class QuestionPageComponent implements OnInit {
       })
     ).subscribe((data) => {
       if (data === null) {
-        if (questionId != null) {
-          this.loadQuestionComments(questionId);
+        if (answerId != null) {
+          this.loadAnswerComments(this.question.answers.find(a => a.id === answerId));
         } else {
-          // this.loadAnswerComments(answerId);
+          this.loadQuestionComments(questionId);
         }
+
         commentControl.reset();
       }
     });
@@ -273,10 +274,10 @@ export class QuestionPageComponent implements OnInit {
         })
       ).subscribe((data) => {
         if (data === null) {
-          if (questionId != null) {
-            this.loadQuestionComments(questionId);
+          if (answerId != null) {
+            this.loadAnswerComments(this.question.answers.find(a => a.id === answerId));
           } else {
-            // this.loadAnswerComments(answerId);
+            this.loadQuestionComments(questionId);
           }
         }
       }
@@ -312,10 +313,10 @@ export class QuestionPageComponent implements OnInit {
           })
         ).subscribe((data) => {
           if (data === null) {
-            if (questionId != null) {
-              this.loadQuestionComments(questionId);
+            if (answerId != null) {
+              this.loadAnswerComments(this.question.answers.find(a => a.id === answerId));
             } else {
-              // this.loadAnswerComments(answerId);
+              this.loadQuestionComments(questionId);
             }
           }
         });
