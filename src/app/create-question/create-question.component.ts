@@ -8,6 +8,7 @@ import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Router} from '@angular/router';
+import {Question} from '../../Models/Question';
 
 @Component({
   selector: 'create-question',
@@ -23,9 +24,9 @@ export class CreateQuestionComponent {
 
   selectedTags: string[] = [];
 
-  @ViewChild('tagInput') tagInput: ElementRef<HTMLInputElement>;
-
-  constructor(private questionService: QuestionsService, private snackBar: MatSnackBar, private router: Router) {
+  constructor(private questionService: QuestionsService,
+              private snackBar: MatSnackBar,
+              private router: Router) {
   }
 
   createQuestion() {
@@ -50,9 +51,9 @@ export class CreateQuestionComponent {
         }
       })
     )
-    ).subscribe((data: any) => {
+    ).subscribe((data: Question) => {
       if (data) {
-        this.router.navigate(['/question/', data]);
+        this.router.navigate(['/question/', data.id]);
       }
     });
   }

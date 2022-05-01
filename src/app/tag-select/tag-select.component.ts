@@ -36,7 +36,12 @@ export class TagSelectComponent {
   @ViewChild('warningTooltip') warningTooltip: TooltipComponent;
 
   addTag(event: MatChipInputEvent) {
-    if (!this.selectedTags.includes(event.value)) {
+    if (event.value && !this.allTags.includes(event.value)) {
+      const bar = this.snackBar.open('No such tag.', 'Close', {
+        panelClass: ['mat-toolbar', 'mat-warn']
+      });
+      bar._dismissAfter(3000);
+    } else if (!this.selectedTags.includes(event.value)) {
       if (event.value) {
         this.selectedTags.push(event.value);
         this.allTags.splice(this.allTags.indexOf(event.value), 1);

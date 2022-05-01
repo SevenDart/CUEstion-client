@@ -1,4 +1,4 @@
-<div class="page-container">
+<div class="question-container">
   <ng-container *ngIf="(question | async) as question; else loading">
     <h1 class="page__header">Update Question</h1>
     <form [formGroup]="questionForm" (ngSubmit)="updateQuestion()">
