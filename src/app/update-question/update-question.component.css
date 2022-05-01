@@ -1,3 +1,7 @@
+.container {
+  padding: 20px;
+}
+
 .question-container {
   margin-left: auto;
   margin-right: auto;
@@ -5,7 +9,6 @@
   padding: 20px;
   background-color: white;
   box-shadow: -1px 1px 20px grey;
-  margin-top: 30px;
 }
 
 .page__header {
@@ -13,14 +16,16 @@
   font-weight: bold;
   line-height: normal;
   text-align: center;
+  margin-top: 0;
 }
 
 .question__header {
-  font-size: 30px;
+  font-size: 40px;
   font-weight: bold;
   line-height: normal;
   display: inline-block;
-  margin-bottom: 15px;
+  margin-bottom: 5px;
+  margin-top: 5px;
 }
 
 .field {

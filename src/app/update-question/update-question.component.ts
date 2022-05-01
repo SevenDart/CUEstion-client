@@ -65,9 +65,7 @@ export class UpdateQuestionComponent {
             }
           })
       ).subscribe((data) => {
-        if (data === null) {
-          this.router.navigate(['/question/', question.id]);
-        }
+        this.router.navigate(['/question/', question.id]);
       });
     });
   }
