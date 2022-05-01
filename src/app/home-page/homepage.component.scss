@@ -1,3 +1,6 @@
+@import "_homepage.theme.scss";
+@include light-theme;
+
 .intro {
   text-align: center;
   display: flex;
@@ -25,9 +28,7 @@
   width: 85%;
 }
 
-.button {
-  background-color: #6E11A8;
-  color: white;
+.intro__button {
   font-size: 18px;
   padding: 0 10px;
 }

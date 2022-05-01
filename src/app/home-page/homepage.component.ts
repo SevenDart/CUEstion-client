@@ -1,19 +1,15 @@
 import {Component, OnInit} from '@angular/core';
 import {QuestionsService} from '../../services/questions.service';
-import {Observable} from 'rxjs';
 import {Question} from '../../Models/Question';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {ActivatedRoute} from '@angular/router';
-
 
 @Component({
   selector: 'home-page',
   templateUrl: './homepage.component.html',
-  styleUrls: [ './homepage.component.css' ],
+  styleUrls: [ './homepage.component.scss' ],
   providers: [QuestionsService]
 })
 export class HomePageComponent implements OnInit {
-  popularQuestions: Observable<Question[]>;
+  popularQuestions: Question[];
   popularQuestionsCount = 10;
 
   displayedColumns: string[] = ['rate', 'header', 'last-update'];
@@ -22,7 +18,11 @@ export class HomePageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.popularQuestions = this.questionService.GetHotQuestions(this.popularQuestionsCount);
+    this.questionService.GetHotQuestions(this.popularQuestionsCount).subscribe(
+      (questions: Question[]) => {
+        this.popularQuestions = questions;
+      }
+    );
   }
 
 
