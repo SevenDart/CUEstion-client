@@ -1,11 +1,10 @@
-import {AfterViewInit, Component, ViewChild} from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {User} from '../../Models/User';
 import {Question} from '../../Models/Question';
 import {QuestionsService} from '../../services/questions.service';
 import {UsersService} from '../../services/users.service';
 import {ActivatedRoute, ParamMap} from '@angular/router';
 import {MatTableDataSource} from '@angular/material/table';
-import {MatPaginator} from '@angular/material/paginator';
 
 
 @Component({
@@ -20,7 +19,6 @@ export class UserPageComponent {
   displayedColumns = ['rate', 'header', 'last-update'];
 
   createdQuestionsDataSource: MatTableDataSource<Question> = new MatTableDataSource<Question>([]);
-  subscribedQuestionsDataSource: MatTableDataSource<Question> = new MatTableDataSource<Question>([]);
   @ViewChild('createdPaginator') createdPaginator;
   @ViewChild('subscribedPaginator') subscribedPaginator;
 

@@ -1,15 +1,12 @@
-import {Component, ElementRef, Input, ViewChild} from '@angular/core';
+import {Component} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Observable, of, throwError} from 'rxjs';
 import {QuestionsService} from '../../services/questions.service';
-import {catchError, map, startWith} from 'rxjs/operators';
-import {MatChipInputEvent} from '@angular/material/chips';
-import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
+import {catchError} from 'rxjs/operators';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import {Question} from '../../Models/Question';
-import {Answer} from '../../Models/Answer';
 import {MatDialog} from '@angular/material/dialog';
 import {ConfirmDialogComponent} from '../confirm-dialog/confirm-dialog.component';
 
@@ -64,7 +61,7 @@ export class UpdateQuestionComponent {
               });
             }
           })
-      ).subscribe((data) => {
+      ).subscribe(() => {
         this.router.navigate(['/question/', question.id]);
       });
     });
