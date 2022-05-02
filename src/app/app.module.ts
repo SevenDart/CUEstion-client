@@ -40,6 +40,11 @@ import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component'
 import {TagEditorComponent} from './tag-editor/tag-editor.component';
 import {UserPageComponent} from './user-page/user-page.component';
 import {MatPaginatorModule} from '@angular/material/paginator';
+import {QuestionsService} from '../services/questions.service';
+import {AnswersService} from '../services/answers.service';
+import {CommentsService} from '../services/comments.service';
+import {TagsService} from '../services/tags.service';
+import {UsersService} from '../services/users.service';
 
 
 const routes: Routes = [
@@ -97,7 +102,14 @@ const routes: Routes = [
     MatTooltipModule,
     MatPaginatorModule
   ],
-  providers: [AuthorizationGuard],
+  providers: [
+    AuthorizationGuard,
+    QuestionsService,
+    AnswersService,
+    CommentsService,
+    TagsService,
+    UsersService
+  ],
   exports: [RouterModule],
   bootstrap: [AppComponent]
 })

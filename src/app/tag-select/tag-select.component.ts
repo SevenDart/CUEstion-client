@@ -1,18 +1,17 @@
-import {Component, ElementRef, EventEmitter, Input, Output, ViewChild, ViewEncapsulation} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {MatChipInputEvent} from '@angular/material/chips';
 import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 import {Observable} from 'rxjs';
 import {FormControl} from '@angular/forms';
 import {map, startWith} from 'rxjs/operators';
-import {QuestionsService} from '../../services/questions.service';
 import {TooltipComponent} from '@angular/material/tooltip';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {TagsService} from '../../services/tags.service';
 
 @Component({
   selector: 'tag-select',
   templateUrl: 'tag-select.component.html',
-  styleUrls: ['tag-select.component.css'],
-  providers: [QuestionsService]
+  styleUrls: ['tag-select.component.css']
 })
 export class TagSelectComponent {
   tagSearch = new FormControl();
@@ -23,8 +22,9 @@ export class TagSelectComponent {
 
   @Output() focus = new EventEmitter<boolean>();
 
-  constructor(private questionsService: QuestionsService, private snackBar: MatSnackBar) {
-    this.questionsService.GetAllTags().subscribe((tags: string[]) => {
+  constructor(private tagsService: TagsService,
+              private snackBar: MatSnackBar) {
+    this.tagsService.GetAllTags().subscribe((tags: string[]) => {
       this.allTags = tags;
     });
     this.filteredTags = this.tagSearch.valueChanges.pipe(

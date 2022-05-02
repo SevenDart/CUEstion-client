@@ -157,11 +157,6 @@
   top: -50px;
 }
 
-.new-comment-field {
-  display: inline;
-  width: 50%;
-}
-
 .new-comment-button {
   display: inline;
   position: relative;
@@ -218,7 +213,7 @@
 }
 
 .tag-icons {
-  width: 0%;
+  width: 0;
   overflow: hidden;
   transition: width 0.5s, margin-left 0.5s;
 }

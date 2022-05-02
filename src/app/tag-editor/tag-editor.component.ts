@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {QuestionsService} from '../../services/questions.service';
 import { of, throwError } from 'rxjs';
 import {FormControl, Validators} from '@angular/forms';
 import {catchError, map, startWith} from 'rxjs/operators';
@@ -7,12 +6,12 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {MatDialog} from '@angular/material/dialog';
 import {ConfirmDialogComponent} from '../confirm-dialog/confirm-dialog.component';
+import {TagsService} from '../../services/tags.service';
 
 @Component({
   selector: 'tag-editor',
   templateUrl: 'tag-editor.component.html',
-  styleUrls: ['tag-editor.component.css'],
-  providers: [QuestionsService]
+  styleUrls: ['tag-editor.component.css']
 })
 export class TagEditorComponent implements OnInit {
   tagSearch = new FormControl('');
@@ -22,13 +21,13 @@ export class TagEditorComponent implements OnInit {
   tagsForms = [];
   filteredTags: string[];
 
-  constructor(private questionsService: QuestionsService,
+  constructor(private tagsService: TagsService,
               private snackBar: MatSnackBar,
               private dialog: MatDialog) {
   }
 
   ngOnInit(): void {
-    this.questionsService.GetAllTags().subscribe((tags: string[]) => {
+    this.tagsService.GetAllTags().subscribe((tags: string[]) => {
       this.allTags = tags;
       for (const tag of tags) {
         this.tagsForms[tag] = {
@@ -64,7 +63,7 @@ export class TagEditorComponent implements OnInit {
     });
     dialog.afterClosed().subscribe((result) => {
       if (result === true) {
-        this.questionsService.DeleteTag(tag).pipe(
+        this.tagsService.DeleteTag(tag).pipe(
           catchError((error: HttpErrorResponse) => {
             if (error.status === 500) {
               const bar = this.snackBar.open('Something is wrong, please, try again later.', 'Close', {
@@ -93,7 +92,7 @@ export class TagEditorComponent implements OnInit {
   }
 
   createTag(tag: string) {
-    this.questionsService.CreateTag(tag).pipe(
+    this.tagsService.CreateTag(tag).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 500) {
           const bar = this.snackBar.open('Something is wrong, please, try again later.', 'Close', {
@@ -125,7 +124,7 @@ export class TagEditorComponent implements OnInit {
   }
 
   updateTag(oldTag: string, newTag: string) {
-    this.questionsService.UpdateTag(oldTag, newTag).pipe(
+    this.tagsService.UpdateTag(oldTag, newTag).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 500) {
           const bar = this.snackBar.open('Something is wrong, please, try again later.', 'Close', {

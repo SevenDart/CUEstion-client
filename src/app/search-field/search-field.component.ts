@@ -1,12 +1,11 @@
-import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {FormControl} from '@angular/forms';
-import {Observable, of, pipe} from 'rxjs';
-import {debounceTime, distinctUntilChanged, map, startWith, switchMap} from 'rxjs/operators';
+import {Observable, of} from 'rxjs';
+import {debounceTime, distinctUntilChanged, startWith, switchMap} from 'rxjs/operators';
 import {QuestionsService} from '../../services/questions.service';
 import {Question} from '../../Models/Question';
 import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 import {ActivatedRoute, Params, Router} from '@angular/router';
-import {MatChipInputEvent} from '@angular/material/chips';
 
 @Component({
   selector: 'search-field',

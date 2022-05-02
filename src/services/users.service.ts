@@ -1,10 +1,12 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {User} from '../Models/User';
 import {Question} from '../Models/Question';
 import {environment} from '../environments/environment';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class UsersService {
 
   constructor(private http: HttpClient) {

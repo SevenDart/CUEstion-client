@@ -9,7 +9,7 @@ export interface Question {
   rate: number;
   createTime: Date;
   updateTime: Date;
-  tags: string[];
+  tags?: string[];
   user: User;
   answers?: Answer[];
   comments?: AppComment[];

@@ -12,6 +12,8 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {ConfirmDialogComponent} from '../confirm-dialog/confirm-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
+import {AnswersService} from '../../services/answers.service';
+import {CommentsService} from '../../services/comments.service';
 
 
 @Component({
@@ -22,7 +24,9 @@ import {MatDialog} from '@angular/material/dialog';
 })
 export class QuestionPageComponent implements OnInit {
 
-  constructor(private questionService: QuestionsService,
+  constructor(private questionsService: QuestionsService,
+              private answersService: AnswersService,
+              private commentsService: CommentsService,
               private activatedRoute: ActivatedRoute,
               private router: Router,
               private snackBar: MatSnackBar,
@@ -55,7 +59,7 @@ export class QuestionPageComponent implements OnInit {
   ngOnInit() {
     this.activatedRoute.paramMap.subscribe((map: ParamMap) => {
       const id: number = Number(map.get('id'));
-      this.questionService.GetQuestion(id).subscribe((question: Question) => {
+      this.questionsService.GetQuestion(id).subscribe((question: Question) => {
         this.question = question;
         this.loadAnswers();
       });
@@ -64,7 +68,7 @@ export class QuestionPageComponent implements OnInit {
   }
 
   loadAnswers() {
-    this.questionService.GetAnswersForQuestion(this.question.id)
+    this.answersService.GetAnswersForQuestion(this.question.id)
       .subscribe((answers: Answer[]) => {
         for (const answer of answers) {
           this.answersForms[answer.id] = {
@@ -86,7 +90,7 @@ export class QuestionPageComponent implements OnInit {
   }
 
   addAnswer() {
-    this.questionService.AddAnswer(this.question.id, this.answerControl.value).pipe(
+    this.answersService.AddAnswer(this.question.id, this.answerControl.value).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 500) {
           const bar = this.snackBar.open('Something is wrong, please, try again later.', 'Close', {
@@ -113,7 +117,7 @@ export class QuestionPageComponent implements OnInit {
   }
 
   updateAnswer(answerId: number, originText: string) {
-    this.questionService.UpdateAnswer(this.question.id, answerId,
+    this.answersService.UpdateAnswer(this.question.id, answerId,
       (originText + (this.answersForms[answerId].editFormControl.value.length > 0
         ? ' [UPD.] ' + this.answersForms[answerId].editFormControl.value
         : '')))
@@ -153,7 +157,7 @@ export class QuestionPageComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result === true) {
-        this.questionService.DeleteAnswer(this.question.id, answerId).pipe(
+        this.answersService.DeleteAnswer(this.question.id, answerId).pipe(
           catchError((error: HttpErrorResponse) => {
             if (error.status === 500) {
               const bar = this.snackBar.open('Something is wrong, please, try again later.', 'Close', {
@@ -181,7 +185,7 @@ export class QuestionPageComponent implements OnInit {
   }
 
   loadQuestionComments(questionId: number) {
-    this.questionService.GetCommentsForQuestion(questionId)
+    this.commentsService.GetCommentsForQuestion(questionId)
       .subscribe((comments: AppComment[]) => {
         for (const comment of comments) {
           this.commentForms[comment.id] = {
@@ -200,7 +204,7 @@ export class QuestionPageComponent implements OnInit {
   }
 
   loadAnswerComments(answer: Answer) {
-    this.questionService.GetCommentsForAnswer(this.question.id, answer.id).subscribe((comments: AppComment[]) => {
+    this.commentsService.GetCommentsForAnswer(this.question.id, answer.id).subscribe((comments: AppComment[]) => {
       for (const comment of comments) {
         this.commentForms[comment.id] = {
           get isOwner() {
@@ -218,7 +222,7 @@ export class QuestionPageComponent implements OnInit {
   }
 
   addComment(questionId: number, answerId: number, commentControl: FormControl) {
-    this.questionService.CreateComment(this.question.id, answerId, commentControl.value).pipe(
+    this.commentsService.CreateComment(this.question.id, answerId, commentControl.value).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 500) {
           const bar = this.snackBar.open('Something is wrong, please, try again later.', 'Close', {
@@ -250,7 +254,7 @@ export class QuestionPageComponent implements OnInit {
   }
 
   updateComment(questionId: number, answerId: number, commentId: number, originText: string) {
-    this.questionService.UpdateComment(this.question.id, answerId, commentId,
+    this.commentsService.UpdateComment(this.question.id, answerId, commentId,
       (originText + (this.commentForms[commentId].editFormControl.value.length > 0
         ? ' [UPD.] ' + this.commentForms[commentId].editFormControl.value
         : '')))
@@ -293,7 +297,7 @@ export class QuestionPageComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result === true) {
-        this.questionService.DeleteComment(this.question.id, answerId, commentId).pipe(
+        this.commentsService.DeleteComment(this.question.id, answerId, commentId).pipe(
           catchError((error: HttpErrorResponse) => {
             if (error.status === 500) {
               const bar = this.snackBar.open('Something is wrong, please, try again later.', 'Close', {
@@ -326,7 +330,7 @@ export class QuestionPageComponent implements OnInit {
 
   upvoteForElement(questionId: number, answerId: number, commentId: number) {
     const type = (commentId !== null) ? 'comment' : (answerId !== null) ? 'answer' : 'question';
-    const result: Observable<any> = this.questionService.UpvoteElement(this.question.id, answerId, commentId);
+    const result: Observable<any> = this.questionsService.UpvoteElement(this.question.id, answerId, commentId);
     result.pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 0) {
@@ -371,7 +375,7 @@ export class QuestionPageComponent implements OnInit {
 
   downvoteForElement(questionId: number, answerId: number, commentId: number) {
     const type = (commentId !== null) ? 'comment' : (answerId !== null) ? 'answer' : 'question';
-    const result = this.questionService.DownvoteElement(questionId, answerId, commentId);
+    const result = this.questionsService.DownvoteElement(questionId, answerId, commentId);
     result.pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 0) {
