@@ -1,0 +1,108 @@
+<div class="container">
+  <div class="list">
+    <div class="list__head">
+      <h1 class="list_header">Your Workspaces</h1>
+      <button mat-flat-button
+              color="primary"
+              class="list__add-button"
+              (click)="openCreationForm()"
+      >Create new+
+      </button>
+    </div>
+    <div class="list__content" *ngIf="userWorkspaces; else loading">
+      <form *ngIf="newWorkspaceCreating" [formGroup]="newWorkspaceForm" class="creating-form">
+        <mat-card class="workspace-card creating">
+          <mat-card-title class="workspace-card__title">
+            <i class="workspace-card__icon fa-solid fa-building-user"></i>
+            <mat-form-field class="workspace-card__form-field">
+              <mat-label>Workspace Name</mat-label>
+              <input matInput type="text" formControlName="workspaceName">
+              <mat-error>Field is required.</mat-error>
+            </mat-form-field>
+          </mat-card-title>
+          <mat-card-content>
+            <mat-form-field class="workspace-card__form-field">
+              <mat-label>Description</mat-label>
+              <textarea matInput formControlName="description" type="text"></textarea>
+              <mat-error>Field is required.</mat-error>
+            </mat-form-field>
+          </mat-card-content>
+          <mat-card-actions class="workspace-card__actions">
+            <button mat-flat-button>Create</button>
+          </mat-card-actions>
+          <mat-divider class="workspace-card__divider"></mat-divider>
+          <mat-card-footer class="workspace-card__footer">
+            <p class="workspace-card__role">Admin</p>
+            <div>
+              Rights:
+              <i class="access-right-icon fa-solid fa-plus"
+                 matTooltip="Can create content"
+              ></i>
+              <i class="access-right-icon fa-solid fa-pen"
+                 matTooltip="Can update content"
+              ></i>
+              <i class="access-right-icon fa-solid fa-trash"
+                 matTooltip="Can delete content"
+              ></i>
+              <i class="access-right-icon fa-solid fa-user-plus"
+                 matTooltip="Can add users"
+              ></i>
+              <i class="access-right-icon fa-solid fa-user-gear"
+                 matTooltip="Can manage roles"
+              ></i>
+            </div>
+          </mat-card-footer>
+        </mat-card>
+      </form>
+      <mat-card *ngFor="let workspace of userWorkspaces" class="workspace-card">
+        <mat-card-title class="workspace-card__title">
+          <i class="workspace-card__icon fa-solid fa-building-user"></i>
+          {{workspace.workspace.name}}
+        </mat-card-title>
+        <mat-card-content>{{workspace.workspace.description}}</mat-card-content>
+        <mat-card-actions class="workspace-card__actions">
+          <button mat-flat-button
+                  (click)="enterWorkspace(workspace)">
+            Enter
+          </button>
+          <button mat-flat-button
+                  *ngIf="isChief(workspace.workspace)" routerLink="/workspaces/{{workspace.workspaceId}}"
+                  (click)="workspacesService.SetCurrentWorkspace(workspace)">
+            Edit
+          </button>
+        </mat-card-actions>
+        <mat-divider class="workspace-card__divider"></mat-divider>
+        <mat-card-footer class="workspace-card__footer">
+          <p class="workspace-card__role">{{workspace.workspaceRole.role}}</p>
+          <div>
+            Rights:
+            <i class="access-right-icon fa-solid fa-plus"
+               *ngIf="workspace.workspaceRole.canCreate"
+               matTooltip="Can create content"
+            ></i>
+            <i class="access-right-icon fa-solid fa-pen"
+               *ngIf="workspace.workspaceRole.canUpdate"
+               matTooltip="Can update content"
+            ></i>
+            <i class="access-right-icon fa-solid fa-trash"
+               *ngIf="workspace.workspaceRole.canDelete"
+               matTooltip="Can delete content"
+            ></i>
+            <i class="access-right-icon fa-solid fa-user-plus"
+               *ngIf="workspace.workspaceRole.canAddUsers"
+               matTooltip="Can add users"
+            ></i>
+            <i class="access-right-icon fa-solid fa-user-gear"
+               *ngIf="workspace.workspaceRole.canManageRoles"
+               matTooltip="Can manage roles"
+            ></i>
+          </div>
+        </mat-card-footer>
+      </mat-card>
+    </div>
+  </div>
+</div>
+
+<ng-template #loading>
+  <mat-spinner class="loader"></mat-spinner>
+</ng-template>

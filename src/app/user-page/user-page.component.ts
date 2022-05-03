@@ -10,8 +10,7 @@ import {MatTableDataSource} from '@angular/material/table';
 @Component({
   selector: 'user-page',
   templateUrl: 'user-page.component.html',
-  styleUrls: ['user-page.component.css'],
-  providers: [QuestionsService, UsersService]
+  styleUrls: ['user-page.component.css']
 })
 export class UserPageComponent {
   user: User;

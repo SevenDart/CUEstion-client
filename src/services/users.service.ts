@@ -35,6 +35,10 @@ export class UsersService {
     return this.http.get<User>(environment.serverAddress + '/users/' + userId);
   }
 
+  getAllUsers() {
+    return this.http.get<User[]>(`${environment.serverAddress}/users`);
+  }
+
   register(email: string, password: string) {
     const authData = {
       email: email,

@@ -1,0 +1,81 @@
+.loader {
+  margin: 0 auto;
+}
+
+.container {
+  padding: 20px;
+}
+
+.workspace-container {
+  margin: 0 auto;
+  width: 70%;
+  padding: 20px;
+  background-color: white;
+  box-shadow: -1px 1px 5px grey;
+}
+
+.workspace__name {
+  font-size: 40px;
+  margin-bottom: 0;
+}
+
+.workspace__chief {
+  margin-top: 0;
+  font-size: 30px;
+  font-weight: normal;
+}
+
+.user-tabs {
+  clear: both;
+  margin: 0 auto;
+}
+
+.rate {
+  background-color: gray;
+  font-size: 14px;
+  color: white;
+  font-weight: bold;
+  padding: 3px 5px;
+  border-radius: 5px;
+}
+
+.negative {
+  background-color: red;
+}
+
+.positive {
+  background-color: green;
+}
+
+.workspace-table {
+  margin: 20px auto;
+  width: 90%;
+}
+
+.mat-column-rate {
+  padding: 10px 15px;
+}
+
+.mat-column-username {
+  padding: 8px;
+}
+
+.mat-column-role {
+  text-align: right;
+  padding: 10px;
+}
+
+.mat-column-actions {
+  text-align: right;
+  padding: 10px;
+}
+
+.mat-column-workspace-role {
+
+}
+
+.edit-icon {
+  margin: 0 5px;
+  cursor: pointer;
+}
+

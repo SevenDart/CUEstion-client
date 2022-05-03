@@ -1,0 +1,79 @@
+.loader {
+  margin: 0 auto;
+}
+
+.container {
+  padding: 20px;
+}
+
+.list {
+  padding: 20px;
+
+  .list__head {
+    display: inline-flex;
+  }
+
+  .list__add-button {
+    display: inline;
+    margin: auto 10px;
+  }
+
+  .list__content {
+    display: flex;
+    flex-wrap: wrap;
+
+    .creating-form {
+      width: 400px;
+    }
+
+    .workspace-card {
+      padding: 30px 25px;
+      margin: 20px;
+      max-width: 400px;
+      max-height: 400px;
+
+      &.creating {
+        max-width: none;
+      }
+
+      .workspace-card__title {
+        display: flex;
+      }
+
+      .workspace-card__icon {
+        margin: auto;
+      }
+
+      .workspace-card__form-field {
+        width: 100%;
+      }
+
+      .workspace-card__actions {
+        margin-bottom: 0;
+        padding: 0;
+      }
+
+      .workspace-card__divider {
+        position: relative;
+        margin: auto;
+      }
+
+      .workspace-card__footer {
+        text-align: right;
+        padding: 2px 20px;
+
+        .workspace-card__role {
+          margin: 4px 0;
+        }
+
+        .access-right-icon {
+          color: gray;
+          font-size: 14px;
+          margin: 0 3px;
+        }
+      }
+    }
+  }
+
+
+}

@@ -45,6 +45,13 @@ import {AnswersService} from '../services/answers.service';
 import {CommentsService} from '../services/comments.service';
 import {TagsService} from '../services/tags.service';
 import {UsersService} from '../services/users.service';
+import {WorkspacesListComponent} from './workspaces-list/workspaces-list.component';
+import {MatCardModule} from '@angular/material/card';
+import {WorkspacesService} from '../services/workspaces.service';
+import {WorkspaceRolesService} from '../services/workspaceRoles.service';
+import {WorkspacePageComponent} from './workspace-page/workspace-page.component';
+import {MatSelectModule} from '@angular/material/select';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 
 const routes: Routes = [
@@ -54,7 +61,9 @@ const routes: Routes = [
   {path: 'question/:id/edit', component: UpdateQuestionComponent, canActivate: [AuthorizationGuard]},
   {path: '', redirectTo: 'home'},
   {path: '/', redirectTo: 'home'},
-  {path: 'user/:id', component: UserPageComponent, canActivate: [AuthorizationGuard]}
+  {path: 'user/:id', component: UserPageComponent, canActivate: [AuthorizationGuard]},
+  {path: 'user/:id/workspaces', component: WorkspacesListComponent, canActivate: [AuthorizationGuard]},
+  {path: 'workspaces/:id', component: WorkspacePageComponent, canActivate: [AuthorizationGuard]}
 ];
 
 
@@ -75,40 +84,47 @@ const routes: Routes = [
     TagSelectComponent,
     ConfirmDialogComponent,
     TagEditorComponent,
-    UserPageComponent
+    UserPageComponent,
+    WorkspacesListComponent,
+    WorkspacePageComponent
   ],
-  imports: [
-    BrowserModule,
-    FormsModule,
-    MatInputModule,
-    ReactiveFormsModule,
-    MatAutocompleteModule,
-    BrowserAnimationsModule,
-    RouterModule.forRoot(routes),
-    MatButtonModule,
-    HttpClientModule,
-    MatTableModule,
-    MatChipsModule,
-    MatExpansionModule,
-    MatDividerModule,
-    MatProgressSpinnerModule,
-    MatDialogModule,
-    MatTabsModule,
-    MatIconModule,
-    MatSnackBarModule,
-    TextFieldModule,
-    MatMenuModule,
-    MatListModule,
-    MatTooltipModule,
-    MatPaginatorModule
-  ],
+    imports: [
+        BrowserModule,
+        FormsModule,
+        MatInputModule,
+        ReactiveFormsModule,
+        MatAutocompleteModule,
+        BrowserAnimationsModule,
+        RouterModule.forRoot(routes),
+        MatButtonModule,
+        HttpClientModule,
+        MatTableModule,
+        MatChipsModule,
+        MatExpansionModule,
+        MatDividerModule,
+        MatProgressSpinnerModule,
+        MatDialogModule,
+        MatTabsModule,
+        MatIconModule,
+        MatSnackBarModule,
+        TextFieldModule,
+        MatMenuModule,
+        MatListModule,
+        MatTooltipModule,
+        MatPaginatorModule,
+        MatCardModule,
+        MatSelectModule,
+        MatCheckboxModule
+    ],
   providers: [
     AuthorizationGuard,
     QuestionsService,
     AnswersService,
     CommentsService,
     TagsService,
-    UsersService
+    UsersService,
+    WorkspacesService,
+    WorkspaceRolesService
   ],
   exports: [RouterModule],
   bootstrap: [AppComponent]
