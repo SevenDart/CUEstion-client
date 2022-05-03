@@ -4,6 +4,7 @@ import {WorkspacesService} from '../../services/workspaces.service';
 import {Workspace} from '../../Models/Workspace';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
+import {WorkspaceRole} from '../../Models/WorkspaceRole';
 
 @Component({
   selector: 'workspaces-list',
@@ -36,8 +37,10 @@ export class WorkspacesListComponent implements OnInit {
     this.newWorkspaceForm.reset();
   }
 
-  isChief(workspace: Workspace) {
-    return Number(localStorage.getItem('userId')) === workspace.chiefId;
+  canEdit(workspaceUser: WorkspaceUser) {
+    return Number(localStorage.getItem('userId')) === workspaceUser.workspace.chiefId
+      || workspaceUser.workspaceRole.canAddUsers
+      || workspaceUser.workspaceRole.canManageRoles;
   }
 
   createWorkspace() {

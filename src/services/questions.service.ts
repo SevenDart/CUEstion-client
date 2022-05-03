@@ -11,26 +11,60 @@ export class QuestionsService {
   }
 
   SearchQuestions(query: string, tags: string[]) {
-    let url = environment.serverAddress + '/questions/search' + `?query=${query}`;
+    let url = environment.serverAddress + `/questions/search?query=${query}`;
     for (const tag of tags) {
       url += `&tags=${encodeURIComponent(tag)}`;
     }
-    return this.http.get<Question[]>(url);
+
+    const workspaceId = localStorage.getItem('workspaceId');
+    if (workspaceId) {
+      url += `&workspaceId=${workspaceId}`;
+    }
+
+    const options = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      })
+    };
+
+    return this.http.get<Question[]>(url, options);
   }
 
   GetHotQuestions(count: number) {
-    return this.http.get<Question[]>(environment.serverAddress + '/questions/hot' + `?count=${count}`);
+    let url = `${environment.serverAddress}/questions/hot?count=${count}`;
+
+    const workspaceId = localStorage.getItem('workspaceId');
+    if (workspaceId) {
+      url += `&workspaceId=${workspaceId}`;
+    }
+
+    const options = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      })
+    };
+
+    return this.http.get<Question[]>(url, options);
   }
 
   GetQuestion(id: number) {
-    return this.http.get<Question>(environment.serverAddress + `/questions/${id}`);
+    const options = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      })
+    };
+
+    return this.http.get<Question>(`${environment.serverAddress}/questions/${id}`, options);
   }
 
   CreateQuestion(header: string, description: string, tags: string[]) {
+    const workspaceId = localStorage.getItem('workspaceId');
+
     const question = {
       header: header,
       text: description,
       tags: tags,
+      workspaceId: workspaceId ? workspaceId : null,
       user: {
         id: Number(localStorage.getItem('userId'))
       }

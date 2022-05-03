@@ -22,16 +22,6 @@ export class WorkspaceRolesService {
     return this.http.get<WorkspaceRole[]>(`${environment.serverAddress}/workspaces/${workspaceId}/roles`, options);
   }
 
-  GetWorkspaceRoleById(workspaceId: number, workspaceRoleId: number) {
-    const options = {
-      headers: new HttpHeaders({
-        Authorization: 'Bearer ' + localStorage.getItem('token')
-      })
-    };
-
-    return this.http.get<WorkspaceRole>(`${environment.serverAddress}/workspaces/${workspaceId}/roles/${workspaceRoleId}`, options);
-  }
-
   AddWorkspaceRole(workspaceId: number,
                    role: string,
                    canCreate: boolean,

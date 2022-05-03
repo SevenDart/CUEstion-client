@@ -71,10 +71,22 @@ export class CommentsService {
   }
 
   GetCommentsForQuestion(id: number) {
-    return this.http.get<AppComment[]>(environment.serverAddress + `/questions/${id}/comments`);
+    const options = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      })
+    };
+
+    return this.http.get<AppComment[]>(`${environment.serverAddress}/questions/${id}/comments`, options);
   }
 
   GetCommentsForAnswer(questionId: number, answerId: number) {
-    return this.http.get<AppComment[]>(environment.serverAddress + `/questions/${questionId}/answers/${answerId}/comments`);
+    const options = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      })
+    };
+
+    return this.http.get<AppComment[]>(`${environment.serverAddress}/questions/${questionId}/answers/${answerId}/comments`, options);
   }
 }

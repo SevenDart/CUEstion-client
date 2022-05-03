@@ -1,5 +1,8 @@
 <nav class="navbar">
-  <a class="title" routerLink="/home">CUEstion</a>
+  <a class="title" routerLink="/home">
+    CUEstion
+    <span *ngIf="isInWorkspace && workspace">| {{workspace.name}}</span>
+  </a>
   <search-field class="search-field" *ngIf="router.url != '/home'" [isExpandable]="false"></search-field>
   <div class="auth-panel">
     <auth-panel></auth-panel>

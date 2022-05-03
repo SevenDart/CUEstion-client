@@ -14,6 +14,7 @@
     <button mat-menu-item class="profile" routerLink="/user/{{user.id}}">Your profile</button>
     <button mat-menu-item *ngIf="isAdmin" (click)="openTagsWindow()">Tags</button>
     <button mat-menu-item routerLink="/user/{{user.id}}/workspaces">Your workspaces</button>
+    <button mat-menu-item *ngIf="workspaceId" (click)="exitWorkspace()">Exit workspace</button>
     <button mat-menu-item class="logout" (click)="logout()">Log out</button>
   </mat-menu>
 </ng-container>

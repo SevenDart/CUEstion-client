@@ -3,6 +3,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {environment} from '../environments/environment';
 import {WorkspaceUser} from '../Models/WorkspaceUser';
 import {Workspace} from '../Models/Workspace';
+import {WorkspaceRole} from '../Models/WorkspaceRole';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,6 @@ export class WorkspacesService {
 
   SetCurrentWorkspace(workspaceUser: WorkspaceUser) {
     localStorage.setItem('workspaceId', workspaceUser.workspace.id.toString());
-    localStorage.setItem('workspaceRoleId', workspaceUser.workspaceRole.id.toString());
   }
 
   GetUserWorkspaces() {
@@ -24,6 +24,16 @@ export class WorkspacesService {
     };
 
     return this.http.get<WorkspaceUser[]>(`${environment.serverAddress}/users/workspaces`, options);
+  }
+
+  GetWorkspaceUser(workspaceId: number, userId: number) {
+    const options = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      })
+    };
+
+    return this.http.get<WorkspaceUser>(`${environment.serverAddress}/workspaces/${workspaceId}/users/${userId}`, options);
   }
 
   GetWorkspaceById(workspaceId: number) {
@@ -62,9 +72,10 @@ export class WorkspacesService {
     return this.http.post(`${environment.serverAddress}/workspaces`, workspace, options);
   }
 
-  UpdateWorkspace(workspaceId: number, workspaceName: string, chiefId: number) {
+  UpdateWorkspace(workspaceId: number, workspaceName: string, description: string, chiefId: number) {
     const workspace = {
       Name: workspaceName,
+      Description: description,
       ChiefId: chiefId
     };
 

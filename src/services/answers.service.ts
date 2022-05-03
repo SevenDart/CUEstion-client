@@ -11,7 +11,13 @@ export class AnswersService {
   }
 
   GetAnswersForQuestion(id: number) {
-    return this.http.get<Answer[]>(environment.serverAddress + `/questions/${id}/answers`);
+    const options = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      })
+    };
+
+    return this.http.get<Answer[]>(`${environment.serverAddress}/questions/${id}/answers`, options);
   }
 
   AddAnswer(questionId: number, text: string) {

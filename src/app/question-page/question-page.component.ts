@@ -14,6 +14,9 @@ import {ConfirmDialogComponent} from '../confirm-dialog/confirm-dialog.component
 import {MatDialog} from '@angular/material/dialog';
 import {AnswersService} from '../../services/answers.service';
 import {CommentsService} from '../../services/comments.service';
+import {WorkspaceRole} from '../../Models/WorkspaceRole';
+import {WorkspacesService} from '../../services/workspaces.service';
+import {WorkspaceUser} from '../../Models/WorkspaceUser';
 
 
 @Component({
@@ -23,10 +26,23 @@ import {CommentsService} from '../../services/comments.service';
   providers: [QuestionsService]
 })
 export class QuestionPageComponent implements OnInit {
+  currentRole: WorkspaceRole;
+  questionVotingExpanded = false;
+  question: Question;
+
+  answersForms = [];
+  commentForms = [];
+
+  answerControl: FormControl = new FormControl('',
+    [Validators.required, Validators.minLength(15), Validators.maxLength(2000)]);
+  commentControl: FormControl = new FormControl('',
+    [Validators.required, Validators.minLength(10), Validators.maxLength(200)]);
+
 
   constructor(private questionsService: QuestionsService,
               private answersService: AnswersService,
               private commentsService: CommentsService,
+              private workspacesService: WorkspacesService,
               private activatedRoute: ActivatedRoute,
               private router: Router,
               private snackBar: MatSnackBar,
@@ -45,18 +61,64 @@ export class QuestionPageComponent implements OnInit {
     return UsersService.userId === this.question.user.id;
   }
 
-  questionVotingExpanded = false;
-  question: Question;
+  get canCreate() {
+    const userId = localStorage.getItem('userId');
+    const workspaceId = localStorage.getItem('workspaceId');
 
-  answersForms = [];
-  commentForms = [];
+    if (!userId) {
+      return false;
+    }
 
-  answerControl: FormControl = new FormControl('',
-    [Validators.required, Validators.minLength(15), Validators.maxLength(2000)]);
-  commentControl: FormControl = new FormControl('',
-    [Validators.required, Validators.minLength(10), Validators.maxLength(200)]);
+    if (workspaceId) {
+      return !!this.currentRole && this.currentRole.canCreate;
+    } else {
+      return true;
+    }
+  }
+
+  canUpdate(item: any) {
+    const userId = localStorage.getItem('userId');
+    const workspaceId = localStorage.getItem('workspaceId');
+
+    if (!userId) {
+      return false;
+    }
+
+    console.log(this.currentRole);
+
+    if (workspaceId) {
+      return !!this.currentRole && this.currentRole.canUpdate;
+    } else {
+      return userId === item.userId || localStorage.getItem('role') === 'admin';
+    }
+  }
+
+  canDelete(item: any) {
+    const userId = localStorage.getItem('userId');
+    const workspaceId = localStorage.getItem('workspaceId');
+
+    if (!userId) {
+      return false;
+    }
+
+    if (workspaceId) {
+      return !!this.currentRole && this.currentRole.canDelete;
+    } else {
+      return userId === item.userId || localStorage.getItem('role') === 'admin';
+    }
+  }
 
   ngOnInit() {
+    const userId = localStorage.getItem('userId');
+    const workspaceId = localStorage.getItem('workspaceId');
+    if (workspaceId && userId) {
+      this.workspacesService.GetWorkspaceUser(Number(workspaceId), Number(userId))
+        .subscribe(
+          (wu: WorkspaceUser) => {
+            this.currentRole = wu.workspaceRole;
+          }
+        );
+    }
     this.activatedRoute.paramMap.subscribe((map: ParamMap) => {
       const id: number = Number(map.get('id'));
       this.questionsService.GetQuestion(id).subscribe((question: Question) => {

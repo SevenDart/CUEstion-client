@@ -14,16 +14,16 @@
           <i class="fas fa-chevron-circle-down vote-button" (click)="downvoteForElement(question.id, null, null)"></i>
         </div>
       </div>
-
       <p class="username">{{question.user.username}}</p>
       <p class="date">created at {{question.createTime | date}}</p>
       <p class="date" *ngIf="question.updateTime">updated at {{question.updateTime | date}}</p>
-      <a routerLink="/question/{{question.id}}/edit"
-         *ngIf="isOwner || isAdmin"
-         class="fas fa-pen edit-icon"
+      <a class="fas fa-pen edit-icon"
+         routerLink="/question/{{question.id}}/edit"
+         *ngIf="canUpdate(question)"
          matTooltip="Press to update this question."
          matTooltipPosition="below"></a>
       <p class="text">{{question.text}}</p>
+
       <mat-chip-list>
         <mat-chip class="question__tag"
                   selected
@@ -35,6 +35,7 @@
           {{tag}}
         </mat-chip>
       </mat-chip-list>
+
       <ng-container *ngIf="question.comments as comments; else loading">
         <mat-expansion-panel class="comment-panel">
           <mat-expansion-panel-header class="comment-panel-header">
@@ -48,7 +49,7 @@
                  [class.positive]="commentForms[comment.id].rate > 0"
                  [class.negative]="commentForms[comment.id].rate < 0">
               {{commentForms[comment.id].rate}}
-              <div class="vote-buttons" [class.expanded]="commentForms[comment.id].votingExpanded">
+              <div class="vote-buttons" *ngIf="canCreate" [class.expanded]="commentForms[comment.id].votingExpanded">
                 <i class="fas fa-chevron-circle-up vote-button" (click)="upvoteForElement(question.id, null, comment.id)"></i>
                 <i class="fas fa-chevron-circle-down vote-button" (click)="downvoteForElement(question.id, null, comment.id)"></i>
               </div>
@@ -58,13 +59,13 @@
             <p class="date">created at {{comment.createTime | date}}</p>
             <p class="date" *ngIf="comment.updateTime">updated at {{comment.updateTime | date}}</p>
 
-            <i *ngIf="commentForms[comment.id].isOwner || isAdmin"
+            <i *ngIf="canUpdate(comment)"
                class="fas fa-pen edit-icon"
                [class.active]="commentForms[comment.id].isEditing"
                (click)="commentForms[comment.id].isEditing = !commentForms[comment.id].isEditing"
                matTooltip="Press to update this comment."
                matTooltipPosition="below"></i>
-            <a *ngIf="commentForms[comment.id].isEditing"
+            <a *ngIf="commentForms[comment.id].isEditing && canDelete(comment)"
                class="fas fa-times edit-icon delete-icon"
                (click)="deleteComment(question.id, null, comment.id)"
                matTooltip="Press to delete this comment."
@@ -85,10 +86,9 @@
                         [color]="'primary'">ADD</button>
               </div>
             </div>
-
             <mat-divider></mat-divider>
           </div>
-          <div class="comment-container" *ngIf="isAuthed">
+          <div class="comment-container" *ngIf="canCreate">
             <mat-form-field appearance="outline" class="comment-form">
               <mat-label>Add a comment</mat-label>
               <input matInput [formControl]="commentControl" class="comment-text" maxlength="200">
@@ -105,6 +105,7 @@
         </mat-expansion-panel>
       </ng-container>
     </ng-container>
+
     <ng-container *ngIf="(question && question.answers); else loading">
       <h1 class="answers__header">{{question.answers.length}} Answers</h1>
       <div class="answer" *ngFor="let answer of question.answers">
@@ -122,13 +123,13 @@
         <p class="username">{{answer.user.username}}</p>
         <p class="date">created at {{answer.createTime | date}}</p>
         <p class="date" *ngIf="answer.updateTime">updated at {{answer.updateTime | date}}</p>
-        <i *ngIf="answersForms[answer.id].isOwner || isAdmin"
+        <i *ngIf="canUpdate(answer)"
            class="fas fa-pen edit-icon"
            [class.active]="answersForms[answer.id].isEditing"
            (click)="answersForms[answer.id].isEditing = !answersForms[answer.id].isEditing"
            matTooltip="Press to update this answer."
            matTooltipPosition="below"></i>
-        <a *ngIf="answersForms[answer.id].isEditing"
+        <a *ngIf="answersForms[answer.id].isEditing && canDelete(answer)"
            class="fas fa-times edit-icon delete-icon"
            (click)="deleteAnswer(answer.id)"
            matTooltip="Press to delete this answer."
@@ -158,7 +159,7 @@
                    [class.positive]="commentForms[comment.id].rate > 0"
                    [class.negative]="commentForms[comment.id].rate < 0">
                 {{commentForms[comment.id].rate}}
-                <div class="vote-buttons" [class.expanded]="commentForms[comment.id].votingExpanded">
+                <div class="vote-buttons" *ngIf="canCreate" [class.expanded]="commentForms[comment.id].votingExpanded">
                   <i class="fas fa-chevron-circle-up vote-button" (click)="upvoteForElement(null, answer.id, comment.id)"></i>
                   <i class="fas fa-chevron-circle-down vote-button" (click)="downvoteForElement(null, answer.id, comment.id)"></i>
                 </div>
@@ -168,13 +169,14 @@
               <p class="date">created at {{comment.createTime | date}}</p>
               <p class="date" *ngIf="comment.updateTime">updated at {{comment.updateTime | date}}</p>
 
-              <i *ngIf="commentForms[comment.id].isOwner || isAdmin"
+              <i *ngIf="canUpdate(comment)"
                  class="fas fa-pen edit-icon"
                  [class.active]="commentForms[comment.id].isEditing"
                  (click)="commentForms[comment.id].isEditing = !commentForms[comment.id].isEditing"
                  matTooltip="Press to update this comment."
                  matTooltipPosition="below"></i>
-              <a *ngIf="commentForms[comment.id].isEditing" class="fas fa-times edit-icon delete-icon"
+              <a *ngIf="commentForms[comment.id].isEditing && canDelete(comment)"
+                 class="fas fa-times edit-icon delete-icon"
                  (click)="deleteComment(null, answer.id, comment.id)"
                  matTooltip="Press to delete this comment."
                  matTooltipPosition="below"></a>
@@ -194,11 +196,10 @@
                           [color]="'primary'">ADD</button>
                 </div>
               </div>
-
               <mat-divider></mat-divider>
             </div>
 
-            <div class="comment-container" *ngIf="isAuthed">
+            <div class="comment-container" *ngIf="canCreate">
               <mat-form-field appearance="outline" class="comment-form">
                 <mat-label>Add a comment</mat-label>
                 <input matInput [formControl]="commentControl" class="comment-text" maxlength="200">
@@ -217,7 +218,7 @@
 
       </div>
     </ng-container>
-    <ng-container *ngIf="isAuthed">
+    <ng-container *ngIf="canCreate">
       <h3 class="new-answer">Add your answer!</h3>
       <mat-form-field appearance="outline" class="text new-answer-field">
         <mat-label>Enter your answer</mat-label>

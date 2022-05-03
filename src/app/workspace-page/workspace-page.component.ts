@@ -21,8 +21,13 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 })
 export class WorkspacePageComponent implements OnInit {
   currentRole: WorkspaceRole;
+  currentUserId: number;
   workspace: Workspace;
   allUsers: User[];
+  filteredWorkspaceUsers: User[];
+
+  isWorkspaceEditing: boolean;
+  workspaceEditForm: FormGroup;
 
   newWorkspaceUser = new FormControl('', [Validators.required]);
   newWorkspaceUserRole = new FormControl('', [Validators.required]);
@@ -57,15 +62,17 @@ export class WorkspacePageComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const userId = localStorage.getItem('userId');
+    this.currentUserId = Number(userId);
     this.activatedRoute.paramMap.subscribe(
       (paramMap: ParamMap) => {
         const workspaceId = Number(paramMap.get('id'));
         this.getWorkspace(workspaceId);
-        this.workspaceRolesService
-          .GetWorkspaceRoleById(workspaceId, Number(localStorage.getItem('workspaceRoleId')))
+        this.workspacesService
+          .GetWorkspaceUser(workspaceId, Number(localStorage.getItem('userId')))
           .subscribe(
-            (role: WorkspaceRole) => {
-              this.currentRole = role;
+            (workspaceUser: WorkspaceUser) => {
+              this.currentRole = workspaceUser.workspaceRole;
             }
           );
       }
@@ -88,10 +95,35 @@ export class WorkspacePageComponent implements OnInit {
     );
   }
 
+  editWorkspace() {
+    this.isWorkspaceEditing = false;
+    this.workspacesService.UpdateWorkspace(
+      this.workspace.id,
+      this.workspaceEditForm.get('name').value,
+      this.workspaceEditForm.get('description').value,
+      this.workspaceEditForm.get('chief').value.id)
+      .subscribe(() => {
+        this.getWorkspace(this.workspace.id);
+      });
+  }
+
   getWorkspace(workspaceId: number) {
     this.workspacesService.GetWorkspaceById(workspaceId).subscribe(
       (workspace: Workspace) => {
         this.workspace = workspace;
+        this.workspaceEditForm = new FormGroup({
+          name: new FormControl(workspace.name, [Validators.required]),
+          description: new FormControl(workspace.description, [Validators.required]),
+          chief: new FormControl(workspace.chief, [Validators.required])
+        });
+        this.workspaceEditForm.get('chief').valueChanges.pipe(
+          startWith(''),
+          map(value => this._filterWorkspaceUsers(value)),
+        ).subscribe(
+          (users: User[]) => {
+            this.filteredWorkspaceUsers = users;
+          }
+        );
         this.getWorkspaceUsers(workspaceId);
         this.getWorkspaceRoles(workspaceId);
       }
@@ -112,6 +144,7 @@ export class WorkspacePageComponent implements OnInit {
       (workspaceUsers: WorkspaceUser[]) => {
         this.getAllUsers();
         this.workspaceUsers = workspaceUsers;
+        this.filteredWorkspaceUsers = workspaceUsers.map(wu => wu.user);
         this.workspaceUsersDataSource = new MatTableDataSource<WorkspaceUser>(workspaceUsers);
         for (const wu of workspaceUsers) {
           this.workspaceUsersForms[wu.userId] = {
@@ -268,6 +301,25 @@ export class WorkspacePageComponent implements OnInit {
           this.newWorkspaceUserRole.setValue('');
         }
       );
+  }
+
+  private _filterWorkspaceUsers(value: any): User[] {
+    if (!this.workspaceUsers) {
+      return [];
+    }
+
+    if (!value) {
+      return this.workspaceUsers.map(wu => wu.user);
+    }
+
+    let filterValue;
+    if (typeof value === 'string') {
+      filterValue = value.toLowerCase();
+    } else {
+      return [];
+    }
+
+    return this.workspaceUsers.map(wu => wu.user).filter(option => option.username.toLowerCase().startsWith(filterValue));
   }
 
   private _filterUsers(value: any): User[] {

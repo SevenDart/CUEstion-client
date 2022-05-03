@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {User} from '../../Models/User';
 import {MatDialog} from '@angular/material/dialog';
 import {SignDialogComponent} from './sign-dialog/sign-dialog.component';
 import {UsersService} from '../../services/users.service';
 import {TagEditorComponent} from '../tag-editor/tag-editor.component';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'auth-panel',
@@ -12,12 +13,18 @@ import {MatSnackBar} from '@angular/material/snack-bar';
   styleUrls: ['auth-panel.component.css'],
   providers: [UsersService]
 })
-export class AuthPanelComponent {
+export class AuthPanelComponent implements OnInit {
   user: User;
+  workspaceId: string;
 
   constructor(public dialog: MatDialog,
               private userService: UsersService,
-              private snackBar: MatSnackBar) {
+              private snackBar: MatSnackBar,
+              private router: Router) {
+  }
+
+  ngOnInit() {
+    this.workspaceId = localStorage.getItem('workspaceId');
     this.loadUser();
   }
 
@@ -64,6 +71,12 @@ export class AuthPanelComponent {
     }
   }
 
+  exitWorkspace() {
+    localStorage.removeItem('workspaceId');
+    this.workspaceId = null;
+    this.router.navigate(['/home']);
+  }
+
   openLoginWindow() {
     const window = this.dialog.open(SignDialogComponent, {
       width: '500px'
@@ -79,6 +92,7 @@ export class AuthPanelComponent {
     localStorage.removeItem('userId');
     localStorage.removeItem('role');
     localStorage.removeItem('expiration-time');
+    localStorage.removeItem('workspaceId');
     UsersService.userId = null;
   }
 
