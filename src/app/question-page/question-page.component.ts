@@ -49,18 +49,6 @@ export class QuestionPageComponent implements OnInit {
               private dialog: MatDialog) {
   }
 
-  get isAuthed() {
-    return UsersService.userId !== null;
-  }
-
-  get isAdmin() {
-    return UsersService.IsAdmin;
-  }
-
-  get isOwner() {
-    return UsersService.userId === this.question.user.id;
-  }
-
   get canCreate() {
     const userId = localStorage.getItem('userId');
     const workspaceId = localStorage.getItem('workspaceId');
@@ -84,12 +72,10 @@ export class QuestionPageComponent implements OnInit {
       return false;
     }
 
-    console.log(this.currentRole);
-
     if (workspaceId) {
       return !!this.currentRole && this.currentRole.canUpdate;
     } else {
-      return userId === item.userId || localStorage.getItem('role') === 'admin';
+      return Number(userId) === item.user.id || localStorage.getItem('role') === 'admin';
     }
   }
 

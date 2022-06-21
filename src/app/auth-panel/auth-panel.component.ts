@@ -36,6 +36,7 @@ export class AuthPanelComponent implements OnInit {
         localStorage.removeItem('role');
         localStorage.removeItem('userId');
         localStorage.removeItem('expiration-time');
+        localStorage.removeItem('workspaceId');
         this.snackBar.open('Your authentication token expired, please, re-login to continue.', 'close', {
           panelClass: ['mat-toolbar', 'mat-warn']
         })._dismissAfter(3000);
